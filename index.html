@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PBC Printer Setup — Layer27</title>
+<style>
+  :root {
+    --bg: #f6f7fa;
+    --panel: #ffffff;
+    --ink: #1a2238;
+    --ink-soft: #5a6378;
+    --line: #e3e6ee;
+    --brand: #1f4e79;
+    --brand-soft: #e8f0f9;
+    --accent: #16a34a;
+    --warn: #d97706;
+    --code-bg: #0f172a;
+    --code-ink: #e2e8f0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  header { margin-bottom: 28px; }
+  .brand-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--ink-soft); margin-bottom: 12px;
+    font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .brand-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--brand);
+  }
+  h1 { font-size: 32px; margin: 0 0 6px; letter-spacing: -0.3px; }
+  .sub { color: var(--ink-soft); font-size: 16px; margin: 0; }
+
+  .tabs {
+    display: flex; gap: 4px; padding: 4px;
+    background: #eaedf3; border-radius: 10px;
+    margin: 24px 0 20px; width: fit-content;
+  }
+  .tab {
+    border: 0; background: transparent; cursor: pointer;
+    padding: 8px 18px; border-radius: 7px;
+    font-size: 14px; font-weight: 600; color: var(--ink-soft);
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active {
+    background: white; color: var(--ink);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .auto-tag {
+    display: inline-block; margin-left: 8px;
+    font-size: 11px; background: var(--brand-soft); color: var(--brand);
+    padding: 2px 6px; border-radius: 4px; font-weight: 700;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .panel h2 { margin: 0 0 16px; font-size: 20px; }
+  .panel.os-block { display: none; }
+  .panel.os-block.show { display: block; }
+
+  ol.steps { margin: 0; padding-left: 22px; }
+  ol.steps li { margin-bottom: 10px; }
+  ol.steps li::marker { color: var(--brand); font-weight: 700; }
+
+  kbd {
+    display: inline-block;
+    padding: 2px 6px; font-size: 12px;
+    background: #f1f3f8; border: 1px solid var(--line);
+    border-radius: 4px; font-family: ui-monospace, monospace;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  }
+  strong { color: var(--ink); }
+
+  .code-wrap {
+    position: relative;
+    background: var(--code-bg);
+    border-radius: 8px;
+    margin: 16px 0 4px;
+    overflow: hidden;
+  }
+  .code-wrap pre {
+    margin: 0; padding: 16px 90px 16px 16px;
+    color: var(--code-ink);
+    font-family: "SF Mono", Monaco, Consolas, ui-monospace, monospace;
+    font-size: 13.5px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    border: 1px solid #334155;
+    background: #1e293b; color: var(--code-ink);
+    font-size: 12px; font-weight: 600;
+    padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; transition: all 0.15s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { background: #334155; }
+  .copy-btn.copied { background: var(--accent); border-color: var(--accent); color: white; }
+
+  .callout {
+    background: #fff7ed; border-left: 3px solid var(--warn);
+    padding: 10px 14px; border-radius: 4px; font-size: 14px;
+    margin: 16px 0 0; color: #7c2d12;
+  }
+  .callout strong { color: #7c2d12; }
+
+  table.printers {
+    width: 100%; border-collapse: collapse; margin-top: 8px;
+    font-size: 14px;
+  }
+  table.printers th, table.printers td {
+    text-align: left; padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  table.printers th {
+    background: #f9fafc; color: var(--ink-soft);
+    font-weight: 600; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  table.printers tr:last-child td { border-bottom: 0; }
+  table.printers code {
+    font-family: ui-monospace, monospace; font-size: 13px;
+    color: var(--brand);
+  }
+
+  footer {
+    margin-top: 32px; padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft); font-size: 13px;
+    text-align: center;
+  }
+  footer a { color: var(--brand); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand-row"><span class="brand-dot"></span> Layer27 · Providence Baptist Church</div>
+    <h1>Printer Setup</h1>
+    <p class="sub">Adds all PBC office printers to your laptop in about 30 seconds. Pick your operating system below.</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" data-os="mac" role="tab">macOS<span class="auto-tag" id="auto-mac" style="display:none">DETECTED</span></button>
+    <button class="tab" data-os="windows" role="tab">Windows<span class="auto-tag" id="auto-win" style="display:none">DETECTED</span></button>
+  </div>
+
+  <!-- ===================== macOS ===================== -->
+  <section class="panel os-block" id="os-mac">
+    <h2>macOS — Install Printers</h2>
+    <ol class="steps">
+      <li>Open <strong>Terminal</strong> (Spotlight: <kbd>⌘</kbd>+<kbd>Space</kbd>, type <em>Terminal</em>, press <kbd>Enter</kbd>).</li>
+      <li>Click <strong>Copy</strong> on the command below.</li>
+      <li>Paste into Terminal (<kbd>⌘</kbd>+<kbd>V</kbd>) and press <kbd>Enter</kbd>.</li>
+      <li>Type your Mac password when prompted, then press <kbd>Enter</kbd>. <em>(The password won't appear as you type — that's normal.)</em></li>
+      <li>Wait about 10 seconds. You'll see "All Providence Baptist Church printers are now available."</li>
+    </ol>
+
+    <div class="code-wrap">
+      <pre id="cmd-mac">curl -fsSL https://raw.githubusercontent.com/REPLACE_ORG/REPLACE_REPO/main/mac/install-pbc-printers.sh | sudo bash</pre>
+      <button class="copy-btn" data-target="cmd-mac">Copy</button>
+    </div>
+
+    <div class="callout">
+      <strong>That's it.</strong> Open any document → <strong>File → Print</strong> and pick a Toshiba printer from the list.
+    </div>
+  </section>
+
+  <!-- ===================== Windows ===================== -->
+  <section class="panel os-block" id="os-windows">
+    <h2>Windows — Install Printers</h2>
+    <ol class="steps">
+      <li>Press the <kbd>⊞ Win</kbd> key, type <strong>PowerShell</strong>.</li>
+      <li><strong>Right-click</strong> "Windows PowerShell" → <strong>Run as administrator</strong>.</li>
+      <li>Click <strong>Yes</strong> on the User Account Control prompt.</li>
+      <li>Click <strong>Copy</strong> on the command below, paste it into PowerShell (right-click in the window to paste), and press <kbd>Enter</kbd>.</li>
+      <li>Wait about 30 seconds. You'll see green "ADDED" lines for each printer.</li>
+    </ol>
+
+    <div class="code-wrap">
+      <pre id="cmd-win">irm https://raw.githubusercontent.com/REPLACE_ORG/REPLACE_REPO/main/windows/Install-PBCPrinters.ps1 | iex</pre>
+      <button class="copy-btn" data-target="cmd-win">Copy</button>
+    </div>
+
+    <div class="callout">
+      <strong>Must be run as Administrator.</strong> If you see a red "Access denied" or "must be run as Administrator" message, you missed step 2 — close PowerShell and start over with "Run as administrator".
+    </div>
+  </section>
+
+  <!-- ===================== Printer list ===================== -->
+  <section class="panel">
+    <h2>Printers Being Installed</h2>
+    <table class="printers">
+      <thead>
+        <tr><th>Printer</th><th>Location</th><th>IP Address</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Toshiba B547</td><td>Admin</td><td><code>10.5.1.17</code></td></tr>
+        <tr><td>Toshiba B135</td><td>Admin</td><td><code>10.1.1.51</code></td></tr>
+        <tr><td>Toshiba A510</td><td>Ministry</td><td><code>10.5.1.19</code></td></tr>
+        <tr><td>Toshiba A214</td><td>Ministry</td><td><code>10.40.3.13</code></td></tr>
+        <tr><td>Toshiba A616</td><td>Worship Center / Tech</td><td><code>10.40.3.12</code></td></tr>
+        <tr><td>Toshiba C181</td><td>Worship Center / Tech</td><td><code>10.40.3.15</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    Trouble? Find Anthony in the break room, or email
+    <a href="mailto:support@layer27.com">support@layer27.com</a>
+    · Layer27 Technology Services
+  </footer>
+
+</div>
+
+<script>
+  // ---- OS detection ----------------------------------------------------------
+  function detectOS() {
+    const ua = navigator.userAgent || '';
+    const platform = navigator.platform || '';
+    if (/Mac|iPhone|iPad|iPod/i.test(ua) || /Mac/i.test(platform)) return 'mac';
+    if (/Win/i.test(ua) || /Win/i.test(platform)) return 'windows';
+    return null;
+  }
+
+  // ---- Tab switching ---------------------------------------------------------
+  const tabs = document.querySelectorAll('.tab');
+  const blocks = {
+    mac: document.getElementById('os-mac'),
+    windows: document.getElementById('os-windows')
+  };
+  function showOS(os) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.os === os));
+    Object.entries(blocks).forEach(([k, el]) => el.classList.toggle('show', k === os));
+  }
+  tabs.forEach(t => t.addEventListener('click', () => showOS(t.dataset.os)));
+
+  // Default to detected OS, fall back to Mac
+  const detected = detectOS();
+  if (detected === 'mac') document.getElementById('auto-mac').style.display = '';
+  if (detected === 'windows') document.getElementById('auto-win').style.display = '';
+  showOS(detected || 'mac');
+
+  // ---- Copy buttons ----------------------------------------------------------
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const target = document.getElementById(btn.dataset.target);
+      const text = target.textContent.trim();
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        // Fallback for older browsers
+        const r = document.createRange();
+        r.selectNode(target);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(r);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+      }
+      const original = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('copied');
+      }, 1800);
+    });
+  });
+</script>
+</body>
+</html>
